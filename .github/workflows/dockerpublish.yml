@@ -40,6 +40,9 @@ jobs:
 
           docker tag image $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-
-      - run: docker image rm $IMAGE_ID:$VERSION
-      - run: docker run $IMAGE_ID:$VERSION
+          
+          # Remove image
+          docker image rm $IMAGE_ID:$VERSION -f
+          
+          # Run image
+          docker run $IMAGE_ID:$VERSION
