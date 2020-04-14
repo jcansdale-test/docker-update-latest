@@ -1,0 +1,4 @@
+FROM alpine:3.7
+ARG MESSAGE="Hello, World!"
+ENV MESSAGE=$MESSAGE
+ENTRYPOINT "echo" $MESSAGE
