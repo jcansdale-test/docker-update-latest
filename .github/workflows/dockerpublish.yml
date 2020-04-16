@@ -4,31 +4,25 @@ on:
   push:
   pull_request:
 
-env:
-  IMAGE_NAME: image
-
 jobs:
   push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
-        run: docker build . --file Dockerfile --tag image --build-arg MESSAGE=${{ github.sha }}
-
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
       - name: Push, remove and run image
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
-          VERSION=latest
+          IMAGE_PATH=docker.pkg.github.com/${{ github.repository }}/image:latest
 
-          docker tag image $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+          # Build and tag image
+          docker build . --file Dockerfile --tag $IMAGE_PATH --build-arg MESSAGE=${{ github.sha }}
+
+          # Publish image
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+          docker push $IMAGE_PATH
           
-          # Remove image
-          docker image rm $IMAGE_ID:$VERSION -f
+          # Pull image
+          docker pull $IMAGE_PATH
           
           # Run image
-          docker run $IMAGE_ID:$VERSION
+          docker run $IMAGE_PATH
