@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Push, remove and run image
+      - name: Build, push, pull and run image
         run: |
           IMAGE_PATH=docker.pkg.github.com/${{ github.repository }}/image:latest
 
